@@ -12,7 +12,8 @@ Guide: Prof. Ashwin Seshia.
   electrodes on both sides.
 - Derived the linearised drive force, the electrostatic stiffness, the pull-in voltage and the
   displacement transfer functions.
-- Sized it for ±1 µm of travel at 1.2 kHz. The design numbers are in the table below.
+- Sized it for ±1 µm of travel at 1.2 kHz. The design numbers are in the table below. A check in
+  2026 found a flaw in that sizing (see "Checked again in 2026").
 - Drew the GDS mask layout.
 
 ## Design numbers
@@ -58,6 +59,20 @@ $ python3 -c "from math import sqrt, pi; print(f'{sqrt(59.6 / 1.05e-6) / (2 * pi
 ```
 
 That is the 1.2 kHz in the table.
+
+## Checked again in 2026
+
+The course design sized the flexures without the electrostatic softening. With the numbers above
+it does not hold together. The drive is sized to give 59.6 µN at 10 V, the force for 1 µm on a
+59.6 N/m spring. At the 45 V bias that same electrode area gives an electrostatic stiffness of
+about 122 N/m, twice the flexure stiffness, so the pull-in voltage is only about 31 V. At 45 V the
+mass would snap onto an electrode. A working version needs a lower bias (well under 31 V, with a
+larger drive for the same force) or stiffer flexures, and then a new natural frequency.
+
+```
+$ python3 -c "k=59.6; g=2.2e-6; a=59.6e-6/(2*45*10); print(f'k_e = {2*a*45**2/g:.0f} N/m, pull-in = {(k*g/(2*a))**0.5:.1f} V')"
+k_e = 122 N/m, pull-in = 31.5 V
+```
 
 ## Not in this repo
 
